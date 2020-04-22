@@ -64,7 +64,7 @@ func (m *LongpollManager) Publish(category string, data interface{}) error {
 	if len(category) > 1024 {
 		return errors.New("category cannot be longer than 1024")
 	}
-	m.eventsIn <- lpEvent{timeToEpochMilliseconds(time.Now()), category, data}
+	m.eventsIn <- lpEvent{timeToEpochMicroseconds(time.Now()), category, data}
 	return nil
 }
 
@@ -169,7 +169,7 @@ func StartLongpoll(opts Options) (*LongpollManager, error) {
 		staleCategoryPurgePeriodSeconds: 60 * 3,
 		// set last purge time to present so we wait a full period before puring
 		// if this defaulted to zero then we'd immediately do a purge which is unecessary
-		lastStaleCategoryPurgeTime: timeToEpochMilliseconds(time.Now()),
+		lastStaleCategoryPurgeTime: timeToEpochMicroseconds(time.Now()),
 		// A priority queue (min heap) that keeps track of event buffers by their
 		// last event time.  Used to know when to delete inactive categories/buffers.
 		bufferPriorityQueue: make(priorityQueue, 0),
@@ -247,7 +247,7 @@ func getLongPollSubscriptionHandler(maxTimeoutSeconds int, subscriptionRequests 
 			// Client is requesting any event from given timestamp
 			// parse time
 			var parseError error
-			lastEventTime, parseError = millisecondStringToTime(lastEventTimeParam)
+			lastEventTime, parseError = microsecondStringToTime(lastEventTimeParam)
 			if parseError != nil {
 				if loggingEnabled {
 					log.Printf("Error parsing last_event_time arg. Parm Value: %s, Error: %s.\n",
@@ -308,7 +308,7 @@ type timeoutResponse struct {
 
 func makeTimeoutResponse(t time.Time) *timeoutResponse {
 	return &timeoutResponse{"no events before timeout",
-		timeToEpochMilliseconds(t)}
+		timeToEpochMicroseconds(t)}
 }
 
 type clientCategoryPair struct {
@@ -381,7 +381,7 @@ func (sm *subscriptionManager) run() error {
 }
 
 func (sm *subscriptionManager) seeIfTimeToPurgeStaleCategories() error {
-	now_ms := timeToEpochMilliseconds(time.Now())
+	now_ms := timeToEpochMicroseconds(time.Now())
 	if now_ms > (sm.lastStaleCategoryPurgeTime + int64(1000*sm.staleCategoryPurgePeriodSeconds)) {
 		sm.lastStaleCategoryPurgeTime = now_ms
 		return sm.purgeStaleCategories()
@@ -509,7 +509,7 @@ func (sm *subscriptionManager) handleNewEvent(newEvent *lpEvent) error {
 	if doBufferEvents {
 		// Add event buffer for this event's subscription category if doesn't exist
 		if !bufFound {
-			now_ms := timeToEpochMilliseconds(time.Now())
+			now_ms := timeToEpochMicroseconds(time.Now())
 			buf := &eventBuffer{
 				list.New(),
 				sm.MaxEventBufferSize,
@@ -560,7 +560,7 @@ func (sm *subscriptionManager) checkExpiredEvents(expiringBuf *expiringBuffer) e
 		return nil
 	}
 	// determine what time is considered the threshold for expiration
-	now_ms := timeToEpochMilliseconds(time.Now())
+	now_ms := timeToEpochMicroseconds(time.Now())
 	expiration_time := now_ms - int64(sm.EventTimeToLiveSeconds*1000)
 	return expiringBuf.eventBuffer_ptr.DeleteEventsOlderThan(expiration_time)
 }
@@ -584,7 +584,7 @@ func (sm *subscriptionManager) purgeStaleCategories() error {
 	if sm.LoggingEnabled {
 		log.Println("SubscriptionManager: performing stale category purge.")
 	}
-	now_ms := timeToEpochMilliseconds(time.Now())
+	now_ms := timeToEpochMicroseconds(time.Now())
 	expiration_time := now_ms - int64(sm.EventTimeToLiveSeconds*1000)
 	for sm.bufferPriorityQueue.Len() > 0 {
 		topPriority, err := sm.bufferPriorityQueue.peakTopPriority()

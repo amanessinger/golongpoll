@@ -8,8 +8,8 @@ import (
 func Test_millisecondStringToTime(t *testing.T) {
 	inputs := []string{
 		"0",
-		"1429972200000",
-		"1446508745000",
+		"1429972200000000",
+		"1446508745000000",
 	}
 	type tePair struct {
 		Time  time.Time
@@ -21,7 +21,7 @@ func Test_millisecondStringToTime(t *testing.T) {
 		{time.Date(2015, time.November, 2, 23, 59, 5, 0, time.UTC), nil},
 	}
 	for index, input := range inputs {
-		actualTime, actualError := millisecondStringToTime(input)
+		actualTime, actualError := microsecondStringToTime(input)
 		if actualTime != expected_outputs[index].Time ||
 			actualError != expected_outputs[index].Error {
 			t.Errorf("Expected (%q, %q), got (%q, %q).",
@@ -53,7 +53,7 @@ func Test_millisecondStringToTime_InvalidInput(t *testing.T) {
 		{time.Time{}, "strconv.ParseInt: parsing \"\\t\\b\": invalid syntax"},
 	}
 	for index, input := range inputs {
-		actualTime, actualError := millisecondStringToTime(input)
+		actualTime, actualError := microsecondStringToTime(input)
 		if actualTime != expected_outputs[index].Time || actualError.Error() !=
 			expected_outputs[index].ErrorString {
 			t.Errorf("Expected (%q, %q), got (%q, %q).",
@@ -72,13 +72,13 @@ func Test_timeToEpochMilliseconds(t *testing.T) {
 		time.Date(2015, time.November, 2, 23, 59, 5, 0, time.UTC),
 	}
 	expected_outputs := []int64{
-		-1000,
+		-1000000,
 		0,
-		1429972200000,
-		1446508745000,
+		1429972200000000,
+		1446508745000000,
 	}
 	for index, input := range inputs {
-		actual := timeToEpochMilliseconds(input)
+		actual := timeToEpochMicroseconds(input)
 		if actual != expected_outputs[index] {
 			t.Errorf("Expected %d, got %d.", expected_outputs[index], actual)
 		}

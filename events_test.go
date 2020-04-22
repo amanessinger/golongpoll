@@ -12,12 +12,12 @@ func Test_eventBuffer_QueueEvent(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	var events = []lpEvent{
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-10 * time.Second)), "red", "some string data 1"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 2"},
-		lpEvent{timeToEpochMilliseconds(test_start), "red", "some string data 3"}}
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-10 * time.Second)), "red", "some string data 1"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 2"},
+		lpEvent{timeToEpochMicroseconds(test_start), "red", "some string data 3"}}
 	for i := range events {
 		if err := buffer.QueueEvent(&events[i]); err != nil {
 			t.Errorf("Event queue failed when it shouldn't have. Tried to queue: %q", events[i])
@@ -58,13 +58,13 @@ func Test_eventBuffer_QueueEvent_MaxBufferReached(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		max, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	// Create moreThanMax events
 	events := make([]lpEvent, 0)
 	for i := 0; i < moreThanMax; i++ {
 		events = append(events, lpEvent{
-			timeToEpochMilliseconds(test_start.Add(time.Duration(i) * time.Second)),
+			timeToEpochMicroseconds(test_start.Add(time.Duration(i) * time.Second)),
 			"banana",
 			fmt.Sprintf("some string data %d", i)})
 	}
@@ -112,7 +112,7 @@ func Test_eventBuffer_QueueEvent_InvalidInput(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	// You can't queue nil.  And trying to do so shouldn't change the buffer.
 	if err := buffer.QueueEvent(nil); err == nil {
@@ -124,7 +124,7 @@ func Test_eventBuffer_QueueEvent_InvalidInput(t *testing.T) {
 			"Expected len: 0, got: %d", buffer.List.Len())
 	}
 	// this value should remain unchanged:
-	if buffer.oldestEventTime != timeToEpochMilliseconds(test_start) {
+	if buffer.oldestEventTime != timeToEpochMicroseconds(test_start) {
 		t.Errorf("eventBuffer.oldestEventTime was: %v, expected: %v.",
 			buffer.oldestEventTime, test_start)
 	}
@@ -135,16 +135,16 @@ func Test_eventBuffer_GetEventsSince(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	// Three of the events in our buffer occurred after our since param
 	since := test_start.Add(-9 * time.Second)
 	var events = []lpEvent{
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-12 * time.Second)), "red", "some string data 1"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-11 * time.Second)), "blue", "some string data 2"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-8 * time.Second)), "red", "some string data 3"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 4"},
-		lpEvent{timeToEpochMilliseconds(test_start), "red", "some string data 5"}}
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-12 * time.Second)), "red", "some string data 1"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-11 * time.Second)), "blue", "some string data 2"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-8 * time.Second)), "red", "some string data 3"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 4"},
+		lpEvent{timeToEpochMicroseconds(test_start), "red", "some string data 5"}}
 	for i := range events {
 		if err := buffer.QueueEvent(&events[i]); err != nil {
 			t.Errorf("Event queue failed when it shouldn't have. Tried to queue: %q", events[i])
@@ -185,16 +185,16 @@ func Test_eventBuffer_GetEventsSince_deleteFetchedEvents(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	// Three of the events in our buffer occurred after our since param
 	since := test_start.Add(-9 * time.Second)
 	var events = []lpEvent{
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-12 * time.Second)), "red", "some string data 1"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-11 * time.Second)), "blue", "some string data 2"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-8 * time.Second)), "red", "some string data 3"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 4"},
-		lpEvent{timeToEpochMilliseconds(test_start), "red", "some string data 5"}}
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-12 * time.Second)), "red", "some string data 1"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-11 * time.Second)), "blue", "some string data 2"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-8 * time.Second)), "red", "some string data 3"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 4"},
+		lpEvent{timeToEpochMicroseconds(test_start), "red", "some string data 5"}}
 	for i := range events {
 		if err := buffer.QueueEvent(&events[i]); err != nil {
 			t.Errorf("Event queue failed when it shouldn't have. Tried to queue: %q", events[i])
@@ -248,16 +248,16 @@ func Test_eventBuffer_GetEventsSince_AllEvents(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(time.Now()),
+		timeToEpochMicroseconds(time.Now()),
 	}
 	// All of the events in the buffer occurred after our since param
 	since := time.Now().Add(-30 * time.Second)
 	var events = []lpEvent{
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-12 * time.Second)), "red", "some string data 1"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-11 * time.Second)), "blue", "some string data 2"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-8 * time.Second)), "red", "some string data 3"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-5 * time.Second)), "blue", "some string data 4"},
-		lpEvent{timeToEpochMilliseconds(time.Now()), "red", "some string data 5"}}
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-12 * time.Second)), "red", "some string data 1"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-11 * time.Second)), "blue", "some string data 2"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-8 * time.Second)), "red", "some string data 3"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-5 * time.Second)), "blue", "some string data 4"},
+		lpEvent{timeToEpochMicroseconds(time.Now()), "red", "some string data 5"}}
 	for i := range events {
 		if err := buffer.QueueEvent(&events[i]); err != nil {
 			t.Errorf("Event queue failed when it shouldn't have. Tried to queue: %q", events[i])
@@ -284,16 +284,16 @@ func Test_eventBuffer_GetEventsSince_NoEvents(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(time.Now()),
+		timeToEpochMicroseconds(time.Now()),
 	}
 	// None of the events in the buffer occurred after our since param
 	since := time.Now()
 	var events = []lpEvent{
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-12 * time.Second)), "red", "some string data 1"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-11 * time.Second)), "blue", "some string data 2"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-8 * time.Second)), "red", "some string data 3"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-5 * time.Second)), "blue", "some string data 4"},
-		lpEvent{timeToEpochMilliseconds(time.Now().Add(-3 * time.Second)), "red", "some string data 5"}}
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-12 * time.Second)), "red", "some string data 1"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-11 * time.Second)), "blue", "some string data 2"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-8 * time.Second)), "red", "some string data 3"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-5 * time.Second)), "blue", "some string data 4"},
+		lpEvent{timeToEpochMicroseconds(time.Now().Add(-3 * time.Second)), "red", "some string data 5"}}
 	for i := range events {
 		if err := buffer.QueueEvent(&events[i]); err != nil {
 			t.Errorf("Event queue failed when it shouldn't have. Tried to queue: %q", events[i])
@@ -314,7 +314,7 @@ func Test_eventBuffer_GetEventsSince_EmptyBuffer(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(time.Now()),
+		timeToEpochMicroseconds(time.Now()),
 	}
 	// any events in the last 30 seconds
 	since := time.Now().Add(-30 * time.Second)
@@ -333,7 +333,7 @@ func Test_eventBuffer_GetEventsSince_InvalidItems(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(time.Now()),
+		timeToEpochMicroseconds(time.Now()),
 	}
 	buffer.List.PushBack("some string.  clearly not an Event type")
 	events, err := buffer.GetEventsSince(time.Now(), false)
@@ -352,10 +352,10 @@ func Test_eventBuffer_DeleteEventsOlderThan_Trivial(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 
-	err := buffer.DeleteEventsOlderThan(timeToEpochMilliseconds(test_start.Add(1 * time.Second)))
+	err := buffer.DeleteEventsOlderThan(timeToEpochMicroseconds(test_start.Add(1 * time.Second)))
 	if err != nil {
 		t.Errorf("DeleteEventsOlderThan returned non-nil error: %v", err)
 	}
@@ -369,12 +369,12 @@ func Test_eventBuffer_DeleteEventsOlderThan_InvalidData(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	// Corrupt list by adding something that is not an lpEvent:
 	buffer.List.PushBack("asdf")
 	// Confirm calls to operate on this list are now errors
-	err := buffer.DeleteEventsOlderThan(timeToEpochMilliseconds(test_start.Add(1 * time.Second)))
+	err := buffer.DeleteEventsOlderThan(timeToEpochMicroseconds(test_start.Add(1 * time.Second)))
 	if err == nil {
 		t.Errorf("DeleteEventsOlderThan returned nil error when non-nil error was expected.")
 	}
@@ -388,14 +388,14 @@ func Test_eventBuffer_DeleteEventsOlderThan(t *testing.T) {
 	buffer := eventBuffer{
 		list.New(),
 		10, // max buffer size
-		timeToEpochMilliseconds(test_start),
+		timeToEpochMicroseconds(test_start),
 	}
 	var events = []lpEvent{
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-12 * time.Second)), "red", "some string data 1"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-11 * time.Second)), "blue", "some string data 2"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-8 * time.Second)), "red", "some string data 3"},
-		lpEvent{timeToEpochMilliseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 4"},
-		lpEvent{timeToEpochMilliseconds(test_start), "red", "some string data 5"}}
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-12 * time.Second)), "red", "some string data 1"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-11 * time.Second)), "blue", "some string data 2"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-8 * time.Second)), "red", "some string data 3"},
+		lpEvent{timeToEpochMicroseconds(test_start.Add(-5 * time.Second)), "blue", "some string data 4"},
+		lpEvent{timeToEpochMicroseconds(test_start), "red", "some string data 5"}}
 	for i := range events {
 		if err := buffer.QueueEvent(&events[i]); err != nil {
 			t.Errorf("Event queue failed when it shouldn't have. Tried to queue: %q", events[i])
@@ -407,7 +407,7 @@ func Test_eventBuffer_DeleteEventsOlderThan(t *testing.T) {
 	}
 	// Scenario 1: ask to delete older than a time older than the oldest event,
 	// which means nothing gets deleted.
-	if err := buffer.DeleteEventsOlderThan(timeToEpochMilliseconds(test_start.Add(-13 * time.Second))); err != nil {
+	if err := buffer.DeleteEventsOlderThan(timeToEpochMicroseconds(test_start.Add(-13 * time.Second))); err != nil {
 		t.Errorf("Unexpected error during DeleteEventsOlderThan: %v", err)
 	}
 	// No events removed
@@ -423,7 +423,7 @@ func Test_eventBuffer_DeleteEventsOlderThan(t *testing.T) {
 
 	// Scenario 2: ask to delete older than some time half way thru the events
 	// so some of them are deleted
-	if err := buffer.DeleteEventsOlderThan(timeToEpochMilliseconds(test_start.Add(-10 * time.Second))); err != nil {
+	if err := buffer.DeleteEventsOlderThan(timeToEpochMicroseconds(test_start.Add(-10 * time.Second))); err != nil {
 		t.Errorf("Unexpected error during DeleteEventsOlderThan: %v", err)
 	}
 	// Oldest 2 events removed
@@ -441,7 +441,7 @@ func Test_eventBuffer_DeleteEventsOlderThan(t *testing.T) {
 	// so all events are deleted.
 	// NOTE: asking to delete at time == newest event time,
 	// this also tests that we are inclusive in our boundary, using <= not just <
-	if err := buffer.DeleteEventsOlderThan(timeToEpochMilliseconds(test_start)); err != nil {
+	if err := buffer.DeleteEventsOlderThan(timeToEpochMicroseconds(test_start)); err != nil {
 		t.Errorf("Unexpected error during DeleteEventsOlderThan: %v", err)
 	}
 	// Remaining 3 events removed

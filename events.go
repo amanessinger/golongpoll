@@ -98,7 +98,7 @@ func (eb *eventBuffer) GetEventsSince(since time.Time,
 			return events, fmt.Errorf("Found non-event type in event buffer.")
 		}
 		// is event time after 'since' time arg? convert 'since' to epoch ms
-		if event.Timestamp > timeToEpochMilliseconds(since) {
+		if event.Timestamp > timeToEpochMicroseconds(since) {
 			lastGoodItem = element
 		} else {
 			// we've reached items that are too old, they occurred before or on

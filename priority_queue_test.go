@@ -14,7 +14,7 @@ func Test_priorityQueue_Len(t *testing.T) {
 			pq.Len(), 0)
 	}
 	// add an item
-	now_ms := timeToEpochMilliseconds(time.Now())
+	now_ms := timeToEpochMicroseconds(time.Now())
 	buf := &eventBuffer{
 		list.New(),
 		100,
@@ -60,7 +60,7 @@ func Test_priorityQueue_Len(t *testing.T) {
 }
 
 func Test_priorityQueue(t *testing.T) {
-	now_ms := timeToEpochMilliseconds(time.Now())
+	now_ms := timeToEpochMicroseconds(time.Now())
 	pq := make(priorityQueue, 0)
 	heap.Init(&pq)
 

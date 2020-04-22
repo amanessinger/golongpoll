@@ -488,7 +488,7 @@ func Test_LongpollManager_WebClient_NoEventsSoTimeout(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("SubscriptionHandler didn't return %v", http.StatusOK)
 	}
-	approxTimeoutTime := timeToEpochMilliseconds(time.Now())
+	approxTimeoutTime := timeToEpochMicroseconds(time.Now())
 	var timeoutResp timeoutResponse
 	if err := json.Unmarshal(w.Body.Bytes(), &timeoutResp); err != nil {
 		t.Errorf("Failed to decode json: %q", err)
@@ -665,7 +665,7 @@ func Test_LongpollManager_WebClient_HasEvents(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("SubscriptionHandler didn't return %v", http.StatusOK)
 	}
-	approxTimeoutTime := timeToEpochMilliseconds(time.Now())
+	approxTimeoutTime := timeToEpochMicroseconds(time.Now())
 	var timeoutResp timeoutResponse
 	if err := json.Unmarshal(w.Body.Bytes(), &timeoutResp); err != nil {
 		t.Errorf("Failed to decode json: %q", err)
@@ -682,7 +682,7 @@ func Test_LongpollManager_WebClient_HasEvents(t *testing.T) {
 	// Now ask for events since the start of our test, which will include
 	// our previously seen event
 	req, _ = http.NewRequest("GET", fmt.Sprintf("?timeout=2&category=veggies&since_time=%d",
-		timeToEpochMilliseconds(startTime)), nil)
+		timeToEpochMicroseconds(startTime)), nil)
 	w = NewCloseNotifierRecorder()
 	subscriptionHandler.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -728,7 +728,7 @@ func Test_LongpollManager_WebClient_HasEvents(t *testing.T) {
 
 	// Confirm we get both events when asking for any events since start of test run
 	req, _ = http.NewRequest("GET", fmt.Sprintf("?timeout=2&category=veggies&since_time=%d",
-		timeToEpochMilliseconds(startTime)), nil)
+		timeToEpochMicroseconds(startTime)), nil)
 	w = NewCloseNotifierRecorder()
 	subscriptionHandler.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -770,7 +770,7 @@ func Test_LongpollManager_WebClient_HasBufferedEvents(t *testing.T) {
 	// This request clearly takes place after the two events were published.
 	// But we ask for any events since the start of this test case
 	req, _ := http.NewRequest("GET", fmt.Sprintf("?timeout=2&category=veggies&since_time=%d",
-		timeToEpochMilliseconds(startTime)), nil)
+		timeToEpochMicroseconds(startTime)), nil)
 	w := NewCloseNotifierRecorder()
 	subscriptionHandler.ServeHTTP(w, req)
 
@@ -806,7 +806,7 @@ func Test_LongpollManager_WebClient_HasBufferedEvents(t *testing.T) {
 func Test_LongpollManager_makeTimeoutResponse(t *testing.T) {
 	now := time.Now()
 	timeoutResp := makeTimeoutResponse(now)
-	timeoutTime := timeToEpochMilliseconds(now)
+	timeoutTime := timeToEpochMicroseconds(now)
 	if timeoutResp.TimeoutMessage != "no events before timeout" {
 		t.Errorf("Unexpected timeout message: %q", timeoutResp.TimeoutMessage)
 	}
@@ -1082,7 +1082,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("SubscriptionHandler didn't return %v", http.StatusOK)
 	}
-	approxTimeoutTime := timeToEpochMilliseconds(time.Now())
+	approxTimeoutTime := timeToEpochMicroseconds(time.Now())
 	var timeoutResp timeoutResponse
 	if err := json.Unmarshal(w.Body.Bytes(), &timeoutResp); err != nil {
 		t.Errorf("Failed to decode json: %q", err)
@@ -1132,7 +1132,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Errorf("SubscriptionHandler didn't return %v", http.StatusOK)
 	}
-	approxTimeoutTime = timeToEpochMilliseconds(time.Now())
+	approxTimeoutTime = timeToEpochMicroseconds(time.Now())
 	if err := json.Unmarshal(w.Body.Bytes(), &timeoutResp); err != nil {
 		t.Errorf("Failed to decode json: %q", err)
 	}
@@ -1228,7 +1228,7 @@ func deleteOnFetchTest(manager *LongpollManager, t *testing.T) {
 
 	// Now let's do a longpoll on the fruit category asking for events less
 	// than 1s old, confirm the most recent fruit (orange) was removed
-	since_time := timeToEpochMilliseconds(time.Now().Add(-1 * time.Second))
+	since_time := timeToEpochMicroseconds(time.Now().Add(-1 * time.Second))
 	subscriptionHandler := ajaxHandler(manager.SubscriptionHandler)
 	req, _ := http.NewRequest("GET", fmt.Sprintf("?timeout=1&category=fruit&since_time=%d", since_time), nil)
 	w := NewCloseNotifierRecorder()
@@ -1292,7 +1292,7 @@ func deleteOnFetchTest(manager *LongpollManager, t *testing.T) {
 
 	// Now request all veggie events (since beginning of time), confirm all
 	// veggies removed
-	since_time = timeToEpochMilliseconds(time.Now().Add(-60 * time.Second))
+	since_time = timeToEpochMicroseconds(time.Now().Add(-60 * time.Second))
 	subscriptionHandler = ajaxHandler(manager.SubscriptionHandler)
 	req, _ = http.NewRequest("GET", fmt.Sprintf("?timeout=1&category=veggie&since_time=%d", since_time), nil)
 	w = NewCloseNotifierRecorder()
