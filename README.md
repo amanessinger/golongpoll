@@ -1,8 +1,13 @@
-# golongpoll [![Build Status](https://travis-ci.org/jcuga/golongpoll.svg?branch=master)](https://travis-ci.org/jcuga/golongpoll) [![Coverage Status](https://coveralls.io/repos/jcuga/golongpoll/badge.svg?branch=master&service=github)](https://coveralls.io/github/jcuga/golongpoll?branch=master) [![GoDoc](https://godoc.org/github.com/jcuga/golongpoll?status.svg)](https://godoc.org/github.com/jcuga/golongpoll) [![Go Report Card](https://goreportcard.com/badge/jcuga/golongpoll)](https://goreportcard.com/report/jcuga/golongpoll)
+# golongpoll 
 Golang long polling library. Makes web pub-sub easy via an HTTP long-poll server.
+
+This is a fork, not fully supported. The Go client code is likely broken, everything else should be ok.
+This is an incompatible special-purpose version, therefore it might not find its way back into
+[jcuga/golongpoll](https://github.com/jcuga/golongpoll).
 
 Table of contents
 =================
+  * [New in v2.2](#new-in-v20)
   * [New in v1.1](#new-in-v11)
   * [Basic Usage](#basic-usage)
     * [HTTP Subscription Handler](#http-subscription-handler)
@@ -15,6 +20,11 @@ Table of contents
     * [Events with JSON payloads](#events-with-json-payloads)
     * [Wrapping subscriptions](#wrapping-subscriptions)
     * [Publishing events via the web](#publishing-events-via-the-web)
+
+New in v2.0
+=================
+- Changed event timestamp resolution from milliseconds to microseconds. This breaks clients and requires 
+  major version raise 
 
 New in v1.1
 =================
