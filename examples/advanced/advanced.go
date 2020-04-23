@@ -229,7 +229,7 @@ func AdvancedExampleHomepage(w http.ResponseWriter, r *http.Request) {
     // Start checking for any events that occurred within 2 minutes prior to page load
     // so you can switch pages to other users, and then come back and see
     // recent events:
-    var yourActionsSinceTime = (new Date(Date.now() - 120000)).getTime();;
+    var yourActionsSinceTime = (new Date(Date.now() - 120000)).getTime() * 1000;
 
     // Let's subscribe to your events.
     var yourActionsCategory = "%s_actions";
@@ -260,7 +260,7 @@ func AdvancedExampleHomepage(w http.ResponseWriter, r *http.Request) {
                     		var publicString = "(private)";
                         }
                         // prepend instead of append so newest is up top--easier to see with no scrolling
-                        $("#your-actions").prepend("<tr><td>" + event.data.user + ": " + event.data.action + " " + publicString + " at " + (new Date(event.timestamp).toLocaleTimeString()) +  "</td></tr>")
+                        $("#your-actions").prepend("<tr><td>" + event.data.user + ": " + event.data.action + " " + publicString + " at " + (new Date(event.timestamp / 1000).toLocaleTimeString()) +  "</td></tr>")
                         // Update sinceTime to only request events that occurred after this one.
                         yourActionsSinceTime = event.timestamp;
                     }
@@ -321,7 +321,7 @@ func AdvancedExampleHomepage(w http.ResponseWriter, r *http.Request) {
                             var publicString = "(private)";
                         }
                         // prepend instead of append so newest is up top--easier to see with no scrolling
-                        $("#public-actions").prepend("<tr><td>" + event.data.user + ": " + event.data.action + " " + publicString + " at " + (new Date(event.timestamp).toLocaleTimeString()) +  "</td></tr>")
+                        $("#public-actions").prepend("<tr><td>" + event.data.user + ": " + event.data.action + " " + publicString + " at " + (new Date(event.timestamp / 1000).toLocaleTimeString()) +  "</td></tr>")
                         // Update sinceTime to only request events that occurred after this one.
                         publicActionsSinceTime = event.timestamp;
                     }
