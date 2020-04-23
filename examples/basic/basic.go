@@ -131,7 +131,7 @@ func BasicExampleHomepage(w http.ResponseWriter, r *http.Request) {
                     for (var i = 0; i < data.events.length; i++) {
                         // Display event
                         var event = data.events[i];
-                        $("#animal-events").append("<li>" + event.data + " at " + (new Date(event.timestamp).toLocaleTimeString()) +  "</li>")
+                        $("#animal-events").append("<li>" + event.data + " at " + (new Date(event.timestamp / 1000).toLocaleTimeString()) +  "</li>")
                         // Update sinceTime to only request events that occurred after this one.
                         sinceTime = event.timestamp;
                     }
