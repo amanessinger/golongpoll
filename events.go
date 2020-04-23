@@ -7,13 +7,14 @@ import (
 	"time"
 )
 
-// lpEvent is a longpoll event.  This type has a Timestamp as milliseconds since
+// lpEvent is a longpoll event.  This type has a Timestamp as microseconds since
 // epoch (UTC), a string category, and an arbitrary Data payload.
 // The category is the subscription category/topic that clients can listen for
 // via longpolling.  The Data payload can be anything that is JSON serializable
 // via the encoding/json library's json.Marshal function.
 type lpEvent struct {
-	// Timestamp is milliseconds since epoch to match javascrits Date.getTime()
+	// Timestamp is microseconds since epoch, need to convert on client
+	// to match javascrits Date.getTime()
 	Timestamp int64  `json:"timestamp"`
 	Category  string `json:"category"`
 	// NOTE: Data can be anything that is able to passed to json.Marshal()

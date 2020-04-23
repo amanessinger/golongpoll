@@ -241,7 +241,7 @@ func getLongPollSubscriptionHandler(maxTimeoutSeconds int, subscriptionRequests 
 		}
 		// Default to only looking for current events
 		lastEventTime := time.Now()
-		// since_time is string of milliseconds since epoch
+		// since_time is string of microseconds since epoch
 		lastEventTimeParam := r.URL.Query().Get("since_time")
 		if len(lastEventTimeParam) > 0 {
 			// Client is requesting any event from given timestamp
@@ -587,7 +587,7 @@ func (sm *subscriptionManager) purgeStaleCategories() error {
 	now_ms := timeToEpochMicroseconds(time.Now())
 	expiration_time := now_ms - int64(sm.EventTimeToLiveSeconds*1000)
 	for sm.bufferPriorityQueue.Len() > 0 {
-		topPriority, err := sm.bufferPriorityQueue.peakTopPriority()
+		topPriority, err := sm.bufferPriorityQueue.peekTopPriority()
 		if err != nil {
 			// queue is empty (threw empty buffer error) nothing to purge
 			break

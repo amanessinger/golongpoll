@@ -993,7 +993,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 	// with the oldest last-event (even tho fruit was started first, it has a
 	// more recent event published on it--the heap sorts categories by how old
 	// each categories most recent event is)
-	if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+	if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 		t.Errorf("Unexpected error checking top priority: %v", peakErr)
 	} else {
 		if priority != veggie_buffer.eventBuffer_ptr.List.Front().Value.(*lpEvent).Timestamp {
@@ -1026,7 +1026,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 	if sm.bufferPriorityQueue.Len() != 2 {
 		t.Errorf("Unexpected heap size.  was: %d, expected: %d", sm.bufferPriorityQueue.Len(), 2)
 	}
-	if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+	if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 		t.Errorf("Unexpected error checking top priority: %v", peakErr)
 	} else {
 		if priority != veggie_buffer.eventBuffer_ptr.List.Front().Value.(*lpEvent).Timestamp {
@@ -1063,7 +1063,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 		t.Errorf("Unexpected heap size.  was: %d, expected: %d", sm.bufferPriorityQueue.Len(), 2)
 	}
 	// veggie buffer is still the oldest-newest-event category
-	if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+	if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 		t.Errorf("Unexpected error checking top priority: %v", peakErr)
 	} else {
 		if priority != veggie_buffer.eventBuffer_ptr.List.Front().Value.(*lpEvent).Timestamp {
@@ -1116,7 +1116,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 		t.Errorf("Unexpected heap size.  was: %d, expected: %d", sm.bufferPriorityQueue.Len(), 1)
 	}
 	// fruit buffer is now the oldest most-recent-event-time buffer (and the only one)
-	if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+	if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 		t.Errorf("Unexpected error checking top priority: %v", peakErr)
 	} else {
 		if priority != fruit_buffer.eventBuffer_ptr.List.Front().Value.(*lpEvent).Timestamp {
@@ -1160,7 +1160,7 @@ func Test_LongpollManager_EventExpiration(t *testing.T) {
 		t.Errorf("Unexpected heap size.  was: %d, expected: %d", sm.bufferPriorityQueue.Len(), 0)
 	}
 	// fruit buffer is now the oldest most-recent-event-time buffer (and the only one)
-	if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr == nil {
+	if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr == nil {
 		t.Errorf("Expected error when peaking at top of empty queue.")
 	} else {
 		if priority != -1 {
@@ -1215,7 +1215,7 @@ func deleteOnFetchTest(manager *LongpollManager, t *testing.T) {
 	var priority_before_removal int64
 	// Only check heap if we're using it.  When no TTL, heap is not used.
 	if sm.EventTimeToLiveSeconds != FOREVER {
-		if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+		if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 			t.Errorf("Unexpected error checking top priority: %v", peakErr)
 		} else {
 			if priority != fruit_buffer.eventBuffer_ptr.List.Front().Value.(*lpEvent).Timestamp {
@@ -1280,7 +1280,7 @@ func deleteOnFetchTest(manager *LongpollManager, t *testing.T) {
 		// it is complicated to know what to update the priority to, and it doesn't
 		// harm or break the other behavior to skip updating it, the worst that
 		// happens is a frivolous expiration check that removes nothing.
-		if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+		if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 			t.Errorf("Unexpected error checking top priority: %v", peakErr)
 		} else {
 			if priority != priority_before_removal {
@@ -1339,7 +1339,7 @@ func deleteOnFetchTest(manager *LongpollManager, t *testing.T) {
 	}
 	if sm.EventTimeToLiveSeconds != FOREVER {
 		// Heap still not changed for same reasons as before
-		if priority, peakErr := sm.bufferPriorityQueue.peakTopPriority(); peakErr != nil {
+		if priority, peakErr := sm.bufferPriorityQueue.peekTopPriority(); peakErr != nil {
 			t.Errorf("Unexpected error checking top priority: %v", peakErr)
 		} else {
 			if priority != priority_before_removal {

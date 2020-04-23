@@ -107,8 +107,8 @@ func BasicExampleHomepage(w http.ResponseWriter, r *http.Request) {
 
     // Start checking for any events that occurred after page load time (right now)
     // Notice how we use .getTime() to have num milliseconds since epoch in UTC
-    // This is the time format the longpoll server uses.
-    var sinceTime = (new Date(Date.now())).getTime();
+    // Need to convert to the time format the longpoll server uses.
+    var sinceTime = (new Date(Date.now())).getTime() * 1000;
 
     // Let's subscribe to animal related events.
     var category = "farm";
